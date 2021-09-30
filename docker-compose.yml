@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  database:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: adminMaster
+
+  producing:
+    build: ProducingApi_Spring
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      spring.datasource.url: jdbc:postgresql://database:5432/postgres
+    depends_on:
+      - database
+
+  consuming:
+    build: ConsumingAPI_Spring
+    restart: always
+    ports:
+      - "8081:8081"
+    depends_on:
+      - database
+      - producing
